@@ -1,0 +1,25 @@
+.paginator {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+
+    &__item {
+        font-size: 16px;
+        border-radius: 2px;
+        padding: 8px;
+
+        &:not(:last-child) {
+            margin-right: 8px;
+        }
+
+        &:hover {
+            opacity: .8;
+        }
+    }
+
+}
+
+.disabled {
+    display: none;
+}
