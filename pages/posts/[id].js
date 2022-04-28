@@ -2,11 +2,14 @@ import MainContainer from "../../components/MainContainer";
 import MainStyles from '../../styles/MainContainer.module.scss'
 import styles from '../../styles/PostPage.module.scss'
 import A from "../../components/A";
+import { useRouter } from "next/router";
 // eslint-disable-next-line import/no-anonymous-default-export
-export default function ({post}) {
+export default function Post ({post}) {
+
+    const {query} = useRouter()
 
     return (
-        <MainContainer title={`Post number ${post.id}`}>
+        <MainContainer title={`Post number ${query.id}`}>
             <section className={`${MainStyles.container} ${styles.post}`}>
 
                 <h1 className={styles.post__title}>Post number <span>{post.id}</span></h1>
