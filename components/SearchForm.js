@@ -1,25 +1,28 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import styles from '../styles/SearchForm.module.scss'
 
-export const SearchForm = ({onSearchSend, currentPage, children}) => {
+export const SearchForm = ({className, onSearchSend, currentPage, placeholder}) => {
 
     const [searchValue, setSearchValue] = useState('')
 
+    useEffect(()=>{
+      onSearchSend(searchValue) 
+    });
+
     return (
-        <form>
-            <input 
-                type={'text'} 
+        <form className={className}>
+            <input
+                className={styles.SearchForm__input}
+                type={'text'}
+                placeholder={placeholder} 
                 value={searchValue} 
                 onChange={(e)=> {
                     setSearchValue(e.target.value);
+                    onSearchSend(searchValue)
+                    currentPage(1)
                 }}
             />
-
-            
-            <button onClick={(e)=>{
-                e.preventDefault();
-                onSearchSend(searchValue)
-                currentPage(1)
-                }}>{children}</button>
         </form>
     )
 }

@@ -1,14 +1,11 @@
 import MainContainer from '../../components/MainContainer'
 import styles from '../../styles/Posts.module.scss'
-import butstyles from '../../styles/Paginator.module.scss'
-
+import paginatorStyles from '../../styles/Paginator.module.scss'
 import mainStyles from '../../styles/MainContainer.module.scss'
-
-import A from '../../components/A'
 import { useState, useEffect } from 'react'
 import Paginator from '../../components/Paginator'
 import SearchForm from '../../components/SearchForm'
-import Image from 'next/image'
+import Table from '../../components/Table'
 
 
 export const Posts = ({posts}) => {
@@ -19,7 +16,9 @@ export const Posts = ({posts}) => {
     const [totalCountRow, setTotalCountRow] = useState(0);
     const [totalCountPage, setTotalCountPage] = useState(0);
     const [currentPageNumber, setCurrentPageNumber] = useState(1);
-    const [isButtonDisabled, setButtonDisabled] = useState(butstyles.disabled)
+    const [isButtonPrevDisabled, setButtonPrevDisabled] = useState()
+    const [isButtonNextDisabled, setButtonNextDisabled] = useState()
+    const [activePage, setActivePage] = useState()
     const [searchText, setSearchText] = useState('')
 
     const onSearchSend = (text) => {
@@ -30,7 +29,6 @@ export const Posts = ({posts}) => {
         if (!searchText) {
             return postsData
         } else {
-
             return postsData.filter(
                 post => {
                     return (post.body.toString().toLowerCase().includes(searchText.toLowerCase())
@@ -52,33 +50,63 @@ export const Posts = ({posts}) => {
 
     const currentPage = (page) => {
         setCurrentPageNumber(page)
+        setActivePage(paginatorStyles.active)
+
+        if (page < 2) {
+            setButtonPrevDisabled(paginatorStyles.disabled)
+            setButtonNextDisabled()
+        } else if (page === totalCountPage){
+            setButtonNextDisabled(paginatorStyles.disabled)
+            setButtonPrevDisabled()
+        } else {
+            setButtonPrevDisabled()
+            setButtonNextDisabled()
+        }
+
     }
 
     useEffect(() => {
 
-
-
         setTotalCountRow(filtredData.length)
         const getTotalCountPage = Math.ceil(totalCountRow/limitCountPage)
         setTotalCountPage(getTotalCountPage)
+
+        if (currentPageNumber == totalCountPage){
+            setButtonNextDisabled(paginatorStyles.disabled)
+        } else {
+            setButtonNextDisabled()
+        }
+
+        if (currentPageRows<1) {
+            setButtonNextDisabled(paginatorStyles.disabled)
+        }
     });
+
+    useEffect(()=> {
+        currentPage(currentPageNumber)
+    },[currentPageNumber])
 
     let pages = []
     for (let i = 1; i <= totalCountPage; i++) {
         pages.push(i)
     }
     const onPrevClick = () => {
-        if (currentPageNumber< 2) {
-            return
+        if (currentPageNumber ==2){
+            setButtonPrevDisabled(paginatorStyles.disabled)
+            setCurrentPageNumber(currentPageNumber - 1)
+        } else {
+            setCurrentPageNumber(currentPageNumber - 1)
+            setButtonNextDisabled()
         }
-        setCurrentPageNumber(currentPageNumber - 1)
     }
 
     const onNextClick = () => {
-        if (currentPageNumber > totalCountPage-1) {
-            return
+        if (currentPageNumber == totalCountPage){
+            setButtonNextDisabled(paginatorStyles.disabled)
+        } else {
+            setCurrentPageNumber(currentPageNumber + 1)
+            setButtonPrevDisabled()
         }
-        setCurrentPageNumber(currentPageNumber + 1)
     }
 
     
@@ -101,32 +129,31 @@ export const Posts = ({posts}) => {
 
         <section className={`${styles.posts} ${mainStyles.container}`}>
 
-            <h1 className={styles.posts__title}>Posts</h1>
+            <h1 className={styles.posts__title}>Posts page</h1>
 
-            <SearchForm currentPage={currentPage} onSearchSend={onSearchSend}>Search</SearchForm>
+            <SearchForm className={styles.posts__form} 
+                placeholder={'Search in all columns'} 
+                currentPage={currentPage} 
+                onSearchSend={onSearchSend}
+            >
+            </SearchForm>
 
-            <table className={styles.table}>
-                <thead className={styles.thead}>
-                    <tr className={styles.table__rows}>
-                        <th onClick={() => {sortData('userId')}}>Author ids <Image src='/angle-arrow-down_icon-icons.com_73683.svg' width={12} height={12}></Image></th>
-                        <th onClick={() => {sortData('id')}}>Post id <Image src='/angle-arrow-down_icon-icons.com_73683.svg' width={12} height={12}></Image></th>
-                        <th onClick={() => {sortData('title')}}>Post title <Image src='/angle-arrow-down_icon-icons.com_73683.svg' width={12} height={12}></Image></th>
-                        <th onClick={() => {sortData('body')}}>Post content <Image src='/angle-arrow-down_icon-icons.com_73683.svg' width={12} height={12}></Image></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentPageRows.map(post =>
-                        <tr key={post.id}>
-                            <td><A href={`/posts/${post.id}`}>#{post.userId}</A></td>
-                            <td><A href={`/posts/${post.id}`}>#{post.id}</A></td>
-                            <td><A href={`/posts/${post.id}`}>{post.title}</A></td>
-                            <td><A href={`/posts/${post.id}`}>{post.body}</A></td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+            <Table className={styles.posts__table}
+                searchText={searchText} 
+                currentPageRows={currentPageRows} 
+                sortData={sortData}
+            >
+            </Table>
 
-            <Paginator isButtonDisabled={isButtonDisabled} onNextClick={onNextClick} onPrevClick={onPrevClick} pages={pages} currentPage={currentPage}></Paginator>
+            <Paginator className={styles.posts__paginator}
+                currentPageNumber={currentPageNumber}
+                activePage={activePage}
+                isButtonNextDisabled={isButtonNextDisabled} 
+                isButtonPrevDisabled={isButtonPrevDisabled} 
+                onNextClick={onNextClick} onPrevClick={onPrevClick} 
+                pages={pages} currentPage={currentPage}
+            >
+            </Paginator>
         </section>
 
     </MainContainer>  

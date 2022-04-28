@@ -1,0 +1,26 @@
+.SearchForm {
+    &__input {
+        background-color: #969268;
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        color: aliceblue;
+        text-align: center;
+        transition: all .3s;
+
+        &:focus {
+            border: none;
+            outline: none;
+        }
+
+        &::placeholder{
+            color: aliceblue;
+            text-align: center;
+        }
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+}

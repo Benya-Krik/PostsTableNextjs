@@ -1,18 +1,39 @@
 import React from 'react'
 import styles from '../styles/Paginator.module.scss'
-import A from './A'
 
 
-export const Paginator = ({pages, currentPage, onNextClick, onPrevClick, isButtonDisabled}) => {
+export const Paginator = ({pages, currentPage, className, currentPageNumber, onNextClick, onPrevClick, isButtonPrevDisabled, isButtonNextDisabled, activePage}) => {
   return (
-    <ul className={styles.paginator}>
-        <li className={`${styles.paginator__item} ${isButtonDisabled}`} onClick={() =>{onPrevClick()}}><A href="#">«</A></li>
+    <ul className={`${styles.paginator} ${className}`}>
+
+        <li 
+        className={`${styles.paginator__item} ${isButtonPrevDisabled}`} 
+        onClick={() =>{onPrevClick()}}
+        >
+          <button className={styles.paginator__button}>«</button>
+        </li>
+
         {pages.map((page) => {
             return (
-                <li className={`${styles.paginator__item}`} onClick={() =>{currentPage(page)}} key={page}><A href="#">{page}</A></li>
+
+                <li 
+                className={`${styles.paginator__item} ${(currentPageNumber === page)? activePage : ''}`} 
+                onClick={() =>{currentPage(page)}} key={page}
+                >
+
+                  <p>{page}</p>
+
+                </li>
             );
         })}
-        <li className={`${styles.paginator__item} ${isButtonDisabled}`} onClick={() =>{onNextClick()}}><A href="#">»</A></li>
+
+        <li
+        className={`${styles.paginator__item} ${isButtonNextDisabled}`}
+        onClick={() =>{onNextClick()}}
+        >
+          <button className={styles.paginator__button}>»</button>
+        </li>
+
     </ul>
   )
 }
